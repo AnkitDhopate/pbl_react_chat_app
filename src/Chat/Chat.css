@@ -1,14 +1,23 @@
 .chat {
+  height: 90vh;
   flex: 0.8;
   display: flex;
   flex-direction: column;
 }
 
 .chat_header {
+  border-radius: 13px 13px 3px 3px;
   padding: 20px;
   display: flex;
   align-items: center;
   border-bottom: 1px solid rgb(146, 146, 146);
+  color: rgb(255, 255, 255);
+  background-color: rgb(255, 59, 59);
+  font-weight: bold;
+}
+
+.ham {
+  display: none;
 }
 
 .chat_header_info {
@@ -25,6 +34,10 @@
   color: black;
 }
 
+.chat_scroll {
+  height: 73vh;
+}
+
 .chat_body {
   flex: 1;
   background-color: white;
@@ -33,24 +46,21 @@
   padding: 30px;
 }
 
-.temp {
-  overflow: scroll;
-  scrollbar-track-color: blue;
-}
-
 .chat_msg {
   width: fit-content;
   position: relative;
   font-size: 16px;
   padding: 10px;
   border-radius: 10px;
-  background-color: rgb(255, 162, 162);
+  background-color: rgb(255, 59, 59);
   margin-bottom: 30px;
+  color: rgb(255, 255, 255);
 }
 
 .chat_sender {
   margin-left: auto;
-  background-color: rgb(195, 255, 195);
+  background-color: rgb(0, 153, 255);
+  color: rgb(255, 255, 255);
 }
 
 .chat_name {
@@ -58,6 +68,7 @@
   top: -15px;
   font-weight: 800;
   font-size: xx-small;
+  color: black;
 }
 
 .timestamp {
@@ -69,9 +80,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 62px;
+  height: 70px;
   border-top: 1px solid lightgrey;
-  background-color: rgb(240, 240, 240);
+  background-color: rgb(255, 255, 255);
+  border-radius: 0 0 13px 13px;
 }
 
 .chat_footer form {
@@ -89,4 +101,21 @@
 
 .chat_footer button {
   display: none;
+}
+
+@media screen and (max-width: 600px) {
+  .chat {
+    flex: 1;
+  }
+
+  .avatar {
+    margin-left: 20px;
+    height: 20px;
+    width: 20px;
+  }
+
+  .ham {
+    width: 40px;
+    display: block;
+  }
 }

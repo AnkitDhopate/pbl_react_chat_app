@@ -4,6 +4,8 @@ import Sidebar from "../Sidebar/Sidebar";
 import Chat from "../Chat/Chat";
 import "./Home.css";
 
+// Sidebar and Chat box
+
 const Home = () => {
   return (
     <>

@@ -99,7 +99,9 @@ const SidebarChat = ({ id, name, addNewChat, friend_uid }) => {
     </Link>
   ) : (
     <div onClick={createChat} className="sidebar_chat_container">
-      <h2>Add new chat</h2>
+      <div className="add_new_chat_container">
+        <h3>Add new chat</h3>
+      </div>
     </div>
   );
 };

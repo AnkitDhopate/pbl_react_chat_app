@@ -6,10 +6,10 @@ import db from "../firebase";
 import firebase from "firebase";
 import ReactScrollableFeed from "react-scrollable-feed";
 import { useSelector } from "react-redux";
+import CryptoJS from "crypto-js";
 
 const Chat = () => {
   const user = useSelector((state) => state.user);
-  const [seed, setSeed] = useState("");
   const [input, setInput] = useState("");
   const { roomId } = useParams();
   const [roomName, setRoomName] = useState("");
@@ -43,68 +43,78 @@ const Chat = () => {
         .collection("messages")
         .orderBy("timestamp", "asc")
         .onSnapshot((snapshot) =>
-          setMessages(snapshot.docs.map((doc) => doc.data()))
+          setMessages(
+            snapshot.docs.map((doc) =>
+              JSON.parse(
+                CryptoJS.AES.decrypt(
+                  doc.data().encryptedData,
+                  "secrete-key"
+                ).toString(CryptoJS.enc.Utf8)
+              )
+            )
+          )
         );
     }
-  }, [roomId]);
-
-  useEffect(() => {
-    setSeed(Math.floor(Math.random() * 5000));
   }, [roomId]);
 
   const sendMessage = (e) => {
     e.preventDefault();
 
-    db.collection("chats").doc(roomId).collection("messages").add({
+    const data = {
       message: input,
       sender: user.providerData[0].displayName,
       receiver: roomName,
+    };
+
+    const encryptedData = CryptoJS.AES.encrypt(
+      JSON.stringify(data),
+      "secrete-key"
+    ).toString();
+
+    db.collection("chats").doc(roomId).collection("messages").add({
+      encryptedData,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     });
-
     setInput("");
   };
 
   return (
     <div className="chat">
       <div className="chat_header">
-        <Avatar src={url} />
+        <button className="ham">Open</button>
+        <Avatar src={url} className="avatar" />
         <div className="chat_header_info">
           <h3>{roomName}</h3>
-          <p>
-            Last seen :
-            {new Date(
-              messages[messages.length - 1]?.timestamp?.toDate()
-            ).toUTCString()}
-          </p>
         </div>
       </div>
 
-      <ReactScrollableFeed>
-        <div className="chat_body">
-          <div className="temp">
-            {messages.map((message) =>
-              message.sender === user.providerData[0].displayName ? (
-                <p className="chat_msg chat_sender">
-                  <span className="chat_name">{message.sender}</span>
-                  {message.message}
-                  <span className="timestamp">
-                    {new Date(message.timestamp?.toDate()).toUTCString()}
-                  </span>
-                </p>
-              ) : (
-                <p className="chat_msg">
-                  <span className="chat_name">{message.sender}</span>
-                  {message.message}
-                  <span className="timestamp">
-                    {new Date(message.timestamp?.toDate()).toUTCString()}
-                  </span>
-                </p>
-              )
-            )}
+      <div className="chat_scroll">
+        <ReactScrollableFeed>
+          <div className="chat_body">
+            <div className="temp">
+              {messages.map((message) =>
+                message.sender === user.providerData[0].displayName ? (
+                  <p className="chat_msg chat_sender">
+                    <span className="chat_name">{message.sender}</span>
+                    {message.message}
+                    <span className="timestamp">
+                      {new Date(message.timestamp?.toDate()).toUTCString()}
+                    </span>
+                  </p>
+                ) : (
+                  <p className="chat_msg">
+                    <span className="chat_name">{message.sender}</span>
+                    {message.message}
+                    <span className="timestamp">
+                      {new Date(message.timestamp?.toDate()).toUTCString()}
+                    </span>
+                  </p>
+                )
+              )}
+            </div>
           </div>
-        </div>
-      </ReactScrollableFeed>
+        </ReactScrollableFeed>
+      </div>
 
       <div className="chat_footer">
         <form>

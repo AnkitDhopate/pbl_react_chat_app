@@ -2,3 +2,8 @@
   margin: 0;
   padding: 0;
 }
+
+.app_body {
+  margin: 30px;
+  border: 2px solid rgb(0, 81, 255);
+}
