@@ -44,14 +44,15 @@ const Chat = () => {
         .orderBy("timestamp", "asc")
         .onSnapshot((snapshot) =>
           setMessages(
-            snapshot.docs.map((doc) =>
+            snapshot.docs.map((doc) => [
               JSON.parse(
                 CryptoJS.AES.decrypt(
                   doc.data().encryptedData,
                   "secrete-key"
                 ).toString(CryptoJS.enc.Utf8)
-              )
-            )
+              ),
+              doc.data().timestamp,
+            ])
           )
         );
     }
@@ -88,25 +89,33 @@ const Chat = () => {
         </div>
       </div>
 
+      {/* <div className="time">
+        <p>time</p>
+      </div> */}
+
       <div className="chat_scroll">
         <ReactScrollableFeed>
           <div className="chat_body">
             <div className="temp">
               {messages.map((message) =>
-                message.sender === user.providerData[0].displayName ? (
+                message[0].sender === user.providerData[0].displayName ? (
                   <p className="chat_msg chat_sender">
-                    <span className="chat_name">{message.sender}</span>
-                    {message.message}
+                    <span className="chat_name">{message[0].sender}</span>
+                    {message[0].message}
                     <span className="timestamp">
-                      {new Date(message.timestamp?.toDate()).toUTCString()}
+                      {new Date(message[1]?.toDate())
+                        .toUTCString()
+                        .substr(5, 17)}
                     </span>
                   </p>
                 ) : (
                   <p className="chat_msg">
-                    <span className="chat_name">{message.sender}</span>
-                    {message.message}
+                    <span className="chat_name">{message[0].sender}</span>
+                    {message[0].message}
                     <span className="timestamp">
-                      {new Date(message.timestamp?.toDate()).toUTCString()}
+                      {new Date(message[1]?.toDate())
+                        .toUTCString()
+                        .substr(5, 17)}
                     </span>
                   </p>
                 )

@@ -21,16 +21,21 @@ const SidebarChat = ({ id, name, addNewChat, friend_uid }) => {
   }, []);
 
   const createChat = () => {
-    const userUID = prompt("Please the uid of the user");
+    const email = prompt("Please the email of the user");
+    var userUID = "";
 
-    if (userUID === user.providerData[0].uid) {
-      alert("Cannot start with own uid");
+    if (email === user.providerData[0].email) {
+      alert("Cannot start with own email");
     } else {
       db.collection("users").onSnapshot((snapshot) => {
         // Check if user exists
         const check = snapshot.docs.every((data) => {
-          if (data.get("uid") === userUID) return false;
-          return true;
+          if (data.get("email") === email) {
+            userUID = data.get("uid");
+            return false;
+          } else {
+            return true;
+          }
         });
 
         if (check == false) {
